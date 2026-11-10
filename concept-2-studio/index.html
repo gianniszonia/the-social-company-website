@@ -1,0 +1,396 @@
+<!doctype html>
+<html data-concept="c2" data-default-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Social Company — Concept 2: Studio</title>
+<link rel="stylesheet" href="../shared/base.css">
+<script src="../shared/content.js"></script>
+<script src="../shared/core.js"></script>
+<style>
+:root[data-theme="dark"]  { --bg: #0B0B0C; --card: #151517; --glow: rgba(36, 75, 255, .55); --spot: rgba(36, 75, 255, .22); --accent: #7F97FF; }
+:root[data-theme="light"] { --bg: #FFFFFF; --card: #F2F2F0; --glow: rgba(36, 75, 255, .9); --spot: rgba(36, 75, 255, .13); --accent: #244BFF; }
+body { transition: background-color .5s, color .5s; }
+.wrap { max-width: 1440px; margin-inline: auto; padding-inline: var(--gut); }
+section { padding-block: clamp(80px, 12vh, 150px); }
+.label { color: var(--accent); margin-bottom: 22px; display: block; }
+.h-lg { font-size: clamp(36px, 5vw, 80px); max-width: 16ch; }
+.lead { color: var(--muted); max-width: 44ch; margin-top: 20px; font-size: clamp(17px, 1.3vw, 20px); }
+
+/* Cursor */
+.cur, .cur-ring { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 100; border-radius: 50%; translate: -50% -50%; display: none; }
+.cur { width: 8px; height: 8px; background: var(--orange); }
+.cur-ring { width: 38px; height: 38px; border: 1.5px solid var(--fg); opacity: .5; transition: width .3s var(--ease), height .3s var(--ease), opacity .3s, background .3s; }
+.cur-ring.big { width: 84px; height: 84px; opacity: 1; background: var(--spot); border-color: var(--blue); }
+@media (hover: hover) and (pointer: fine) { .has-cur .cur, .has-cur .cur-ring { display: block; } }
+
+/* Nav */
+.nav { position: fixed; top: 14px; left: 50%; translate: -50% 0; z-index: 50; width: min(1180px, calc(100% - 28px)); display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 10px 12px 10px 20px; border-radius: 99px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.logo { font-family: var(--f-head); font-weight: 700; font-size: 17px; letter-spacing: -.03em; white-space: nowrap; }
+.logo b { color: var(--blue); }
+:root[data-theme="dark"] .logo b { color: var(--accent); }
+.nav-links { display: flex; gap: 24px; font-family: var(--f-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+.nav-links a { opacity: .7; transition: opacity .2s; }
+.nav-links a:hover { opacity: 1; }
+.nav-r { display: flex; align-items: center; gap: 16px; }
+.nav-cta { background: var(--blue); color: #fff; border-radius: 99px; padding: 9px 18px; font-size: 14px; font-weight: 500; white-space: nowrap; transition: background .3s; }
+.nav-cta:hover { background: var(--orange); }
+@media (max-width: 980px) { .nav-links, .nav-cta { display: none; } }
+
+/* Hero */
+.hero { min-height: 100svh; position: relative; display: flex; flex-direction: column; justify-content: center; padding-block: 120px 0; overflow: hidden; }
+#dots { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero .wrap { position: relative; width: 100%; pointer-events: none; }
+.hero .wrap a { pointer-events: auto; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 99px; padding: 7px 14px; background: var(--bg); }
+.eyebrow i { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); animation: pulse 1.8s infinite; }
+@keyframes pulse { 50% { opacity: .25; scale: .7; } }
+.hero h1 { font-size: clamp(84px, 19vw, 330px); letter-spacing: -.06em; line-height: .86; margin: 22px 0 0 -.04em; }
+.hero h1 .split-c { opacity: 0; translate: 0 .3em; filter: blur(14px); animation: charIn .9s var(--ease) forwards; animation-delay: calc(.15s + var(--n) * 80ms); }
+.hero h1 .split-c:last-child { color: var(--blue); }
+@keyframes charIn { to { opacity: 1; translate: 0 0; filter: none; } }
+.hero-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; margin-top: 28px; flex-wrap: wrap; }
+.hero-row p { max-width: 48ch; font-size: clamp(17px, 1.35vw, 21px); color: var(--muted); }
+.btn { display: inline-flex; align-items: center; gap: 12px; background: var(--fg); color: var(--bg); border-radius: 99px; padding: 16px 28px; font-weight: 500; transition: background .3s, color .3s; will-change: transform; }
+.btn:hover { background: var(--blue); color: #fff; }
+.btn span:last-child { transition: translate .3s var(--ease); }
+.btn:hover span:last-child { translate: 5px 0; }
+.ticker { margin-top: clamp(40px, 8vh, 90px); border-block: 1px solid var(--line); padding-block: 16px; overflow: hidden; position: relative; background: var(--bg); }
+.ticker-in { display: flex; gap: 36px; width: max-content; animation: slide 38s linear infinite; font-family: var(--f-mono); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+.ticker-in span::after { content: "✺"; color: var(--orange); margin-left: 36px; }
+@keyframes slide { to { translate: -50% 0; } }
+
+/* Spotlight cards (shared by services / stats / packages / shop) */
+.card { position: relative; background: var(--card); border-radius: 22px; overflow: hidden; isolation: isolate; transform-style: preserve-3d; transition: transform .25s ease-out; --mx: 50%; --my: 50%; }
+.card::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .4s; background: radial-gradient(420px circle at var(--mx) var(--my), var(--spot), transparent 65%); }
+.card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(300px circle at var(--mx) var(--my), var(--glow), transparent 70%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.card:hover::before, .card:hover::after { opacity: 1; }
+
+/* Services bento */
+.bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: minmax(250px, auto); gap: 16px; margin-top: clamp(40px, 7vh, 72px); perspective: 1400px; }
+.svc { padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
+.svc:nth-child(1), .svc:nth-child(5) { grid-column: span 2; }
+.svc:nth-child(4), .svc:nth-child(8) { grid-column: span 2; }
+.svc .bg { position: absolute; left: var(--mx); top: var(--my); width: 10px; height: 10px; border-radius: 50%; translate: -50% -50%; z-index: -2; background: var(--blue); scale: 0; transition: scale .7s var(--ease); }
+.svc:hover .bg { scale: 160; }
+.svc:hover { --spot: rgba(255, 255, 255, .16); --glow: #fff; }
+.svc:hover { color: #fff; }
+.svc:hover p { color: rgba(255, 255, 255, .8); }
+.svc-top { display: flex; justify-content: space-between; align-items: center; }
+.svc-top .mono { color: var(--muted); }
+.svc:hover .svc-top .mono { color: #fff; }
+.svc-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; transition: background .3s, rotate .4s var(--ease), border-color .3s; }
+.svc:hover .svc-arrow { background: var(--orange); border-color: var(--orange); rotate: -45deg; }
+.svc h3 { font-size: clamp(24px, 2.2vw, 34px); letter-spacing: -.03em; line-height: 1; }
+.svc p { color: var(--muted); font-size: 15px; margin-top: 10px; max-width: 40ch; transition: color .3s; }
+.addons { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 28px; }
+.addons .mono { color: var(--muted); margin-right: 8px; }
+.chip { border: 1px solid var(--line); border-radius: 99px; padding: 7px 14px; font-size: 14px; transition: border-color .3s, color .3s; }
+.chip:hover { border-color: var(--orange); color: var(--orange); }
+@media (max-width: 1000px) { .bento { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .bento { grid-template-columns: 1fr; } .svc { grid-column: auto !important; } }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.stat { padding: 26px; min-height: 250px; display: flex; flex-direction: column; justify-content: space-between; }
+.stat .num { font-family: var(--f-head); font-weight: 700; font-size: clamp(52px, 6.4vw, 108px); letter-spacing: -.06em; line-height: .9; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stat .num small { font-size: .5em; color: var(--orange); }
+.stat p { color: var(--muted); font-size: 14.5px; }
+.stat .bar { height: 3px; background: var(--line); border-radius: 3px; margin: 14px 0 12px; overflow: hidden; }
+.stat .bar i { display: block; height: 100%; width: 100%; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform 1.8s var(--ease) .2s; }
+.stat.in .bar i { transform: scaleX(var(--w, 1)); }
+@media (max-width: 1000px) { .stats { grid-template-columns: 1fr 1fr; } }
+
+/* Why */
+.why { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(32px, 6vw, 100px); align-items: start; }
+.why-head { position: sticky; top: 120px; }
+.why-list li { display: grid; grid-template-columns: 64px 1fr; gap: 16px; padding: 28px 0; border-top: 1px solid var(--line); transition: padding .4s var(--ease); }
+.why-list li:last-child { border-bottom: 1px solid var(--line); }
+.why-list li:hover { padding-left: 16px; }
+.why-list .mono { color: var(--orange); padding-top: 8px; }
+.why-list h3 { font-size: clamp(24px, 2.4vw, 36px); letter-spacing: -.03em; line-height: 1.05; }
+.why-list p { color: var(--muted); margin-top: 8px; max-width: 46ch; }
+@media (max-width: 900px) { .why { grid-template-columns: 1fr; } .why-head { position: static; } }
+
+/* Packages */
+.pk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: clamp(40px, 7vh, 72px); perspective: 1400px; }
+.pk { padding: clamp(24px, 2.2vw, 36px); display: flex; flex-direction: column; }
+.pk.hot { background: var(--blue); color: #fff; --spot: rgba(255, 255, 255, .2); --glow: #fff; }
+.pk-top { display: flex; justify-content: space-between; align-items: center; }
+.pk .tag { background: var(--orange); color: #fff; border-radius: 99px; padding: 3px 10px; }
+.pk h3 { font-size: clamp(30px, 2.8vw, 44px); }
+.pk .who { opacity: .7; margin-top: 12px; font-size: 15.5px; min-height: 4.6em; }
+.pk .price { display: flex; align-items: baseline; gap: 8px; margin-top: 18px; }
+.pk .price b { font-family: var(--f-head); font-size: clamp(52px, 5vw, 80px); letter-spacing: -.05em; line-height: 1; }
+.pk .price > span { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; opacity: .7; }
+.pk ul { margin-top: 24px; display: grid; gap: 10px; font-size: 15px; }
+.pk li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; }
+.pk li::before { content: "+"; font-family: var(--f-mono); color: var(--orange); }
+.pk.hot li::before { color: #fff; }
+.pk-note { color: var(--muted); font-size: 14px; margin-top: 22px; }
+@media (max-width: 900px) { .pk-grid { grid-template-columns: 1fr; } .pk .who { min-height: 0; } }
+
+/* Clients */
+.clients { overflow: hidden; }
+.mq { display: flex; width: max-content; gap: 14px; margin-top: 14px; animation: slide 50s linear infinite; }
+.mq.rev { animation-direction: reverse; }
+.clients:hover .mq { animation-play-state: paused; }
+.mq span { border: 1px solid var(--line); border-radius: 99px; padding: clamp(14px, 1.6vw, 24px) clamp(22px, 2.6vw, 40px); font-family: var(--f-head); font-weight: 600; font-size: clamp(22px, 2.6vw, 42px); letter-spacing: -.03em; white-space: nowrap; transition: background .3s, color .3s, border-color .3s; }
+.mq span:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+/* Process */
+.proc { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(32px, 6vw, 100px); }
+.steps { position: relative; padding-left: 44px; }
+.steps::before, .steps i { content: ""; position: absolute; left: 11px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+.steps i { background: var(--blue); transform-origin: top; transform: scaleY(var(--p, 0)); }
+.step { position: relative; padding-bottom: clamp(36px, 6vh, 64px); opacity: .35; transition: opacity .5s; }
+.step:last-child { padding-bottom: 0; }
+.step.on { opacity: 1; }
+.step::before { content: ""; position: absolute; left: -40px; top: 6px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--line); transition: border-color .4s, background .4s; }
+.step.on::before { border-color: var(--blue); background: var(--blue); }
+.step .mono { color: var(--orange); }
+.step h3 { font-size: clamp(24px, 2.4vw, 36px); letter-spacing: -.03em; margin: 6px 0 8px; line-height: 1.05; }
+.step p { color: var(--muted); max-width: 44ch; }
+@media (max-width: 900px) { .proc { grid-template-columns: 1fr; } }
+
+/* Shop */
+.shop-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+.badge { display: inline-block; background: var(--orange); color: #fff; border-radius: 99px; padding: 4px 12px; margin-left: 10px; }
+.shop-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: clamp(40px, 7vh, 72px); perspective: 1400px; }
+.tile { aspect-ratio: 3 / 4; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+.tile .mono { color: var(--muted); }
+.tile h3 { font-size: clamp(20px, 1.7vw, 26px); letter-spacing: -.02em; line-height: 1.05; }
+.tile .dl { width: 44px; height: 44px; border-radius: 12px; background: var(--blue); color: #fff; display: grid; place-items: center; font-size: 20px; transition: translate .4s var(--ease), background .3s; }
+.tile:hover .dl { translate: 0 6px; background: var(--orange); }
+@media (max-width: 1000px) { .shop-grid { grid-template-columns: 1fr 1fr; } .tile { aspect-ratio: auto; min-height: 180px; gap: 28px; } }
+
+/* Contact */
+.contact { text-align: center; padding-bottom: clamp(60px, 9vh, 110px); }
+.contact h2 { font-size: clamp(68px, 15vw, 270px); letter-spacing: -.06em; line-height: .88; }
+.contact p { color: var(--muted); max-width: 44ch; margin: 24px auto 0; font-size: clamp(17px, 1.3vw, 20px); }
+.contact p b { color: var(--fg); font-weight: 500; }
+.orb { width: clamp(150px, 15vw, 200px); aspect-ratio: 1; border-radius: 50%; background: var(--blue); color: #fff; display: inline-grid; place-items: center; font-family: var(--f-head); font-weight: 600; font-size: 20px; letter-spacing: -.02em; margin-top: 44px; transition: background .3s; will-change: transform; }
+.orb:hover { background: var(--orange); }
+.links { display: flex; justify-content: center; gap: 12px 36px; flex-wrap: wrap; margin-top: 44px; font-family: var(--f-mono); font-size: 14px; }
+.links a { border-bottom: 1px solid var(--line); padding-bottom: 3px; transition: border-color .3s, color .3s; }
+.links a:hover { color: var(--accent); border-color: var(--accent); }
+.closing { margin-top: 48px; color: var(--muted); }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding-block: 24px; font-size: 13px; color: var(--muted); }
+footer nav { display: flex; gap: 20px; }
+footer a:hover { color: var(--fg); }
+</style>
+</head>
+<body>
+<div class="cur"></div><div class="cur-ring"></div>
+
+<header class="nav">
+  <a class="logo" href="#top">The Social<b>.</b>Company</a>
+  <nav class="nav-links">
+    <a href="#services" data-i18n="nav.services" data-scramble></a>
+    <a href="#packages" data-i18n="nav.packages" data-scramble></a>
+    <a href="#clients" data-i18n="nav.clients" data-scramble></a>
+    <a href="#shop" data-i18n="nav.shop" data-scramble></a>
+  </nav>
+  <div class="nav-r">
+    <div data-controls></div>
+    <a class="nav-cta" href="#contact" data-i18n="nav.cta"></a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <canvas id="dots" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <span class="eyebrow mono"><i></i><span data-i18n="hero.eyebrow"></span></span>
+      <h1 data-i18n="hero.title"></h1>
+      <div class="hero-row">
+        <p data-i18n="hero.sub"></p>
+        <a class="btn" href="#contact" data-magnet><span data-i18n="nav.cta"></span><span>→</span></a>
+      </div>
+    </div>
+    <div class="ticker"><div class="ticker-in" id="ticker"></div></div>
+  </section>
+
+  <section class="wrap" id="services">
+    <span class="label mono" data-i18n="services.label"></span>
+    <h2 class="h-lg" data-i18n="services.title" data-reveal></h2>
+    <div class="bento" id="bento"></div>
+    <div class="addons" id="addons"></div>
+  </section>
+
+  <section class="wrap">
+    <span class="label mono" data-i18n="stats.label"></span>
+    <div class="stats" id="stats"></div>
+  </section>
+
+  <section class="wrap why">
+    <div class="why-head">
+      <span class="label mono" data-i18n="why.label"></span>
+      <h2 class="h-lg" data-i18n="why.title" data-reveal></h2>
+      <p class="lead" data-i18n="why.lead" data-reveal></p>
+    </div>
+    <ul class="why-list" id="whyList"></ul>
+  </section>
+
+  <section class="wrap" id="packages">
+    <span class="label mono" data-i18n="packages.label"></span>
+    <h2 class="h-lg" data-i18n="packages.title" data-reveal></h2>
+    <div class="pk-grid" id="pkGrid"></div>
+    <p class="pk-note" data-i18n="packages.note"></p>
+  </section>
+
+  <section class="clients" id="clients">
+    <div class="wrap" style="margin-bottom:clamp(36px,6vh,64px)">
+      <span class="label mono" data-i18n="clients.label"></span>
+      <h2 class="h-lg" data-i18n="clients.title" data-reveal></h2>
+      <p class="lead" data-i18n="clients.lead"></p>
+    </div>
+    <div class="mq" id="mq1"></div>
+    <div class="mq rev" id="mq2"></div>
+  </section>
+
+  <section class="wrap proc">
+    <div>
+      <span class="label mono" data-i18n="process.label"></span>
+      <h2 class="h-lg" data-i18n="process.title" data-reveal></h2>
+    </div>
+    <div class="steps" id="steps"><i></i></div>
+  </section>
+
+  <section class="wrap" id="shop">
+    <div class="shop-head">
+      <div>
+        <span class="label mono"><span data-i18n="shop.label"></span><span class="badge" data-i18n="shop.badge"></span></span>
+        <h2 class="h-lg" data-i18n="shop.title" data-reveal></h2>
+      </div>
+      <p class="lead" data-i18n="shop.body"></p>
+    </div>
+    <div class="shop-grid" id="shopGrid"></div>
+  </section>
+
+  <section class="wrap contact" id="contact">
+    <span class="label mono" data-i18n="contact.label"></span>
+    <h2 data-i18n="contact.title" data-reveal></h2>
+    <p><span data-i18n="contact.body"></span> <b data-i18n="contact.free"></b></p>
+    <a class="orb" data-magnet data-email-link><span data-i18n="nav.cta"></span></a>
+    <div class="links"><a data-email></a><a data-ig></a></div>
+    <div class="closing mono" id="closing"></div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <span data-i18n="footer.rights"></span>
+  <span data-banners></span>
+  <nav><a href="../index.html" data-i18n="ui.back"></a><a href="#top" data-i18n="footer.top"></a></nav>
+</div></footer>
+
+<script>
+TSC.apply();
+const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+const fine = matchMedia('(hover: hover) and (pointer: fine)').matches && !TSC.reduced;
+
+/* Content */
+const specs = [...T.services.items.map(s => s.t), ...T.services.addons, ...T.industries];
+$('#ticker').innerHTML = [...specs, ...specs].map(s => `<span>${s}</span>`).join('');
+$('#bento').innerHTML = T.services.items.map((x, i) => `<article class="card svc" data-tilt data-reveal style="--i:${i % 4}"><div class="bg"></div><div class="svc-top"><span class="mono">0${i + 1} — ${x.tags}</span><span class="svc-arrow">→</span></div><div><h3>${x.t}</h3><p>${x.d}</p></div></article>`).join('');
+$('#addons').innerHTML = `<span class="mono">${T.services.addonsLabel} +</span>` + T.services.addons.map(a => `<span class="chip">${a}</span>`).join('');
+const widths = [.7, 1, .9, .48];
+$('#stats').innerHTML = T.stats.items.map((x, i) => `<div class="card stat" data-reveal style="--i:${i};--w:${widths[i]}"><span class="mono" style="color:var(--muted)">0${i + 1}</span><div><div class="num"><small>${x.pre}</small><span data-count="${x.n}">${x.n}</span><small>${x.suf}</small></div><div class="bar"><i></i></div><p>${x.l}</p></div></div>`).join('');
+$('#whyList').innerHTML = T.why.items.map((x, i) => `<li data-reveal><span class="mono">0${i + 1}</span><div><h3>${x.t}</h3><p>${x.d}</p></div></li>`).join('');
+$('#pkGrid').innerHTML = T.packages.items.map((x, i) => `<article class="card pk${i === 1 ? ' hot' : ''}" data-tilt data-reveal style="--i:${i}"><div class="pk-top"><h3>${x.name}</h3>${i === 1 ? '<span class="tag mono">★</span>' : ''}</div><p class="who">${x.who}</p><div class="price"><span>${T.packages.from}</span><b>€<span data-count="${x.price}">${x.price}</span></b><span>${T.packages.per}</span></div><ul>${x.feats.map(f => `<li>${f}</li>`).join('')}</ul></article>`).join('');
+const names = T.clients.items, pill = (n) => `<span>${n}</span>`;
+$('#mq1').innerHTML = [...names.slice(0, 5), ...names.slice(0, 5), ...names.slice(0, 5), ...names.slice(0, 5)].map(pill).join('');
+$('#mq2').innerHTML = [...names.slice(5), ...names.slice(5), ...names.slice(5), ...names.slice(5)].map(pill).join('');
+$('#steps').insertAdjacentHTML('beforeend', T.process.items.map((x, i) => `<div class="step"><span class="mono">0${i + 1}</span><h3>${x.t}</h3><p>${x.d}</p></div>`).join(''));
+$('#shopGrid').innerHTML = T.shop.cats.map((c, i) => `<article class="card tile" data-tilt data-reveal style="--i:${i}"><span class="mono">0${i + 1}</span><div><h3>${c}</h3></div><span class="dl">↓</span></article>`).join('');
+$('#closing').textContent = T.contact.closing.join(' ') + ' — ' + T.contact.next;
+$('[data-email-link]').href = 'mailto:' + TSC_INFO.email;
+
+TSC.split($('.hero h1'), true).forEach((c, i) => c.style.setProperty('--n', i));
+TSC.reveal();
+TSC.counters();
+
+/* Cursor + spotlight + tilt + magnetic buttons */
+if (fine) {
+  document.documentElement.classList.add('has-cur');
+  const cur = $('.cur'), ring = $('.cur-ring');
+  let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+  addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; cur.style.transform = `translate(${mx}px, ${my}px)`; });
+  (function loop() { rx += (mx - rx) * .16; ry += (my - ry) * .16; ring.style.transform = `translate(${rx}px, ${ry}px)`; requestAnimationFrame(loop); })();
+  document.addEventListener('mouseover', (e) => ring.classList.toggle('big', !!e.target.closest('a, button, .card, .mq span')));
+
+  $$('.card').forEach((el) => {
+    el.addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      el.style.setProperty('--mx', x + 'px'); el.style.setProperty('--my', y + 'px');
+      if (el.hasAttribute('data-tilt')) el.style.transform = `rotateX(${(.5 - y / r.height) * 7}deg) rotateY(${(x / r.width - .5) * 7}deg) translateZ(8px)`;
+    });
+    el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+  });
+
+  $$('[data-magnet]').forEach((el) => {
+    el.addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * .35}px, ${(e.clientY - r.top - r.height / 2) * .35}px)`;
+      el.style.transition = 'background .3s, color .3s';
+    });
+    el.addEventListener('mouseleave', () => { el.style.transition = 'transform .6s cubic-bezier(.2,.7,.1,1), background .3s, color .3s'; el.style.transform = ''; });
+  });
+}
+
+/* Scramble text on hover */
+const glyphs = 'ABCDEFGHJKLMNPQRSTUVWXYZ#+/—';
+$$('[data-scramble]').forEach((el) => {
+  const final = el.textContent; let raf;
+  el.addEventListener('mouseenter', () => {
+    if (TSC.reduced) return;
+    let f = 0; cancelAnimationFrame(raf);
+    (function tick() {
+      el.textContent = [...final].map((ch, i) => i < f / 2 || ch === ' ' ? ch : glyphs[Math.floor(Math.random() * glyphs.length)]).join('');
+      if (f++ < final.length * 2) raf = requestAnimationFrame(tick); else el.textContent = final;
+    })();
+  });
+});
+
+/* Hero dot field: dots swell and light up around the cursor */
+(function () {
+  const cv = $('#dots'), ctx = cv.getContext('2d'), gap = 30;
+  let w, h, dpr, px = -999, py = -999, tx = -999, ty = -999, t = 0, visible = true;
+  function size() { dpr = Math.min(devicePixelRatio || 1, 2); w = cv.clientWidth; h = cv.clientHeight; cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function draw() {
+    const dark = TSC.theme === 'dark';
+    ctx.clearRect(0, 0, w, h);
+    px += (tx - px) * .12; py += (ty - py) * .12; t += .012;
+    for (let y = gap / 2; y < h; y += gap) for (let x = gap / 2; x < w; x += gap) {
+      const d = Math.hypot(x - px, y - py), k = Math.max(0, 1 - d / 240);
+      const wave = .5 + .5 * Math.sin(x * .012 + y * .02 + t * 2);
+      const r = 1.1 + k * k * 7 + wave * .5;
+      const ang = Math.atan2(y - py, x - px), push = k * k * 16;
+      ctx.beginPath();
+      ctx.arc(x + Math.cos(ang) * push, y + Math.sin(ang) * push, r, 0, 6.283);
+      ctx.fillStyle = k > .02 ? `rgba(${dark ? '95,125,255' : '36,75,255'},${.25 + k * .75})` : (dark ? `rgba(255,255,255,${.1 + wave * .08})` : `rgba(16,16,16,${.12 + wave * .08})`);
+      ctx.fill();
+    }
+    if (visible && !TSC.reduced) requestAnimationFrame(draw);
+  }
+  size(); draw();
+  addEventListener('resize', () => { size(); if (TSC.reduced) draw(); });
+  $('.hero').addEventListener('mousemove', (e) => { const r = cv.getBoundingClientRect(); tx = e.clientX - r.left; ty = e.clientY - r.top; });
+  $('.hero').addEventListener('mouseleave', () => { tx = ty = -999; });
+  new IntersectionObserver(([e]) => { const was = visible; visible = e.isIntersecting; if (visible && !was) draw(); }).observe(cv);
+  TSC.onTheme(() => { if (TSC.reduced || !visible) draw(); });
+})();
+
+/* Process line fills as you scroll through it */
+const steps = $('#steps'), stepEls = $$('.step');
+function onScroll() {
+  const r = steps.getBoundingClientRect(), p = Math.min(1, Math.max(0, (innerHeight * .6 - r.top) / r.height));
+  steps.querySelector('i').style.setProperty('--p', p);
+  stepEls.forEach((s) => s.classList.toggle('on', s.getBoundingClientRect().top < innerHeight * .6));
+}
+addEventListener('scroll', onScroll, { passive: true }); onScroll();
+</script>
+</body>
+</html>

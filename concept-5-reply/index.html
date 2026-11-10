@@ -1,0 +1,388 @@
+<!doctype html>
+<html data-concept="c5" data-default-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Social Company — Concept 5: The Reply</title>
+<link rel="stylesheet" href="../shared/base.css">
+<script src="../shared/content.js"></script>
+<script src="../shared/core.js"></script>
+<style>
+/* Idea: the agency says "Hello." and the visitor answers in one sentence.
+   That answer picks the services, the package and the email they send. */
+:root[data-theme="light"] { --accent: #244BFF; }
+:root[data-theme="dark"]  { --accent: #8FA4FF; --bg: #0C0C0D; }
+body { transition: background-color .4s, color .4s; }
+.wrap { max-width: 1320px; margin-inline: auto; padding-inline: var(--gut); }
+section { padding-block: clamp(72px, 11vh, 140px); border-top: 1px solid var(--line); }
+.label { color: var(--muted); display: block; margin-bottom: clamp(18px, 3vh, 32px); }
+.label b { color: var(--orange); font-weight: 400; margin-right: 10px; }
+.h { font-size: clamp(36px, 5.2vw, 84px); max-width: 14ch; }
+
+/* Nav */
+.nav { position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.nav .wrap { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-block: 14px; }
+.logo { font-family: var(--f-head); font-weight: 700; font-size: 18px; letter-spacing: -.03em; white-space: nowrap; }
+.logo i { color: var(--orange); font-style: normal; }
+.nav-links { display: flex; gap: 26px; font-size: 15px; color: var(--muted); }
+.nav-links a:hover { color: var(--fg); }
+@media (max-width: 900px) { .nav-links { display: none; } }
+
+/* Hero: the exchange */
+.hero { border-top: 0; padding-block: clamp(48px, 8vh, 100px) clamp(64px, 10vh, 120px); }
+.turn { display: grid; grid-template-columns: 150px 1fr; gap: 20px; align-items: start; }
+.turn + .turn { margin-top: clamp(36px, 6vh, 64px); }
+.who { color: var(--muted); padding-top: .9em; }
+.who::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--orange); margin-right: 10px; }
+.turn.you .who::before { background: var(--accent); }
+.hello { font-size: clamp(96px, 19vw, 300px); letter-spacing: -.065em; line-height: .82; margin-left: -.04em; }
+.hello span { display: inline-block; opacity: 0; animation: say .5s var(--ease) forwards; animation-delay: calc(var(--n) * 90ms + .15s); }
+.hello span:last-child { color: var(--orange); }
+@keyframes say { from { opacity: 0; transform: translateY(.18em); } to { opacity: 1; transform: none; } }
+.intro { max-width: 46ch; margin-top: 22px; color: var(--muted); font-size: clamp(17px, 1.3vw, 20px); }
+.sentence { font-family: var(--f-head); font-weight: 500; font-size: clamp(27px, 4.1vw, 64px); letter-spacing: -.035em; line-height: 1.22; max-width: 20ch; }
+.tok { position: relative; display: inline; }
+/* the trigger is an inline span (not a button) so a long choice can wrap across lines like ordinary text */
+.tok > .trg { color: var(--accent); cursor: pointer; text-decoration: underline dashed .06em; text-underline-offset: .14em; transition: color .2s; }
+.tok .nb { white-space: nowrap; }
+.tok .stop { color: var(--fg); display: inline-block; text-decoration: none; margin-left: .04em; }
+.tok .car { font-style: normal; font-size: .45em; margin-left: .25em; vertical-align: .35em; display: inline-block; text-decoration: none; }
+.tok > .trg:hover, .tok.open > .trg { color: var(--orange); }
+.tok .val { display: inline-block; }
+.tok .val.swap { animation: swap .45s var(--ease); }
+@keyframes swap { from { opacity: 0; transform: translateY(.3em); } to { opacity: 1; transform: none; } }
+.menu { position: absolute; left: 0; top: calc(100% + 10px); z-index: 30; min-width: 280px; background: var(--bg); border: 1.5px solid var(--fg); border-radius: 16px; padding: 6px; display: none; box-shadow: 0 18px 50px rgba(0, 0, 0, .18); }
+.tok.open .menu { display: block; }
+.menu button { display: block; width: 100%; text-align: left; font-family: var(--f-body); font-size: 16px; font-weight: 500; letter-spacing: 0; line-height: 1.3; padding: 11px 14px; border-radius: 10px; color: var(--fg); }
+.menu button:hover, .menu button:focus-visible { background: var(--card); }
+.menu button[aria-selected="true"] { background: var(--blue); color: #fff; }
+.answer { margin-top: clamp(28px, 5vh, 48px); background: var(--blue); color: #fff; border-radius: 6px 28px 28px 28px; padding: clamp(20px, 2.4vw, 34px); max-width: 760px; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+.answer p { font-family: var(--f-head); font-weight: 500; font-size: clamp(19px, 1.9vw, 28px); letter-spacing: -.02em; line-height: 1.25; max-width: 26ch; }
+.answer p b { font-weight: 700; }
+.answer.swap p { animation: swap .5s var(--ease); }
+.go { display: inline-flex; gap: 10px; align-items: center; background: #fff; color: var(--blue); border-radius: 99px; padding: 12px 22px; font-weight: 700; white-space: nowrap; transition: background .2s, color .2s, gap .3s var(--ease); }
+.go:hover { background: var(--orange); color: #fff; gap: 16px; }
+@media (max-width: 760px) { .turn { grid-template-columns: 1fr; gap: 6px; } .who { padding-top: 0; } .menu { min-width: 240px; } }
+
+/* Plan */
+.plan-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+.plan-head p { color: var(--muted); max-width: 36ch; }
+.picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: clamp(32px, 5vh, 56px); }
+.pick { border-radius: 24px; padding: clamp(22px, 2.2vw, 34px); background: var(--card); min-height: 300px; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; }
+.pick:first-child { background: var(--blue); color: #fff; }
+.pick .n { font-family: var(--f-head); font-weight: 700; font-size: clamp(56px, 6vw, 96px); letter-spacing: -.06em; line-height: .8; color: var(--orange); }
+.pick:first-child .n { color: #fff; }
+.pick h3 { font-size: clamp(26px, 2.5vw, 40px); letter-spacing: -.035em; line-height: 1.02; }
+.pick p { margin-top: 10px; font-size: 16px; opacity: .82; }
+.pick .mono { display: block; margin-top: 14px; font-size: 11px; opacity: .8; }
+.picks.swap .pick { animation: swap .5s var(--ease) backwards; animation-delay: calc(var(--i) * 70ms); }
+.rest { margin-top: clamp(40px, 7vh, 72px); }
+.rest ul { border-top: 1.5px solid var(--fg); margin-top: 14px; }
+.rest li { display: grid; grid-template-columns: minmax(180px, 1fr) 2fr; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+.rest h3 { font-size: clamp(19px, 1.6vw, 24px); letter-spacing: -.02em; line-height: 1.15; }
+.rest p { color: var(--muted); font-size: 16px; }
+.addons { margin-top: 18px; color: var(--muted); font-size: 15px; }
+.addons b { color: var(--fg); font-weight: 500; }
+@media (max-width: 900px) { .picks { grid-template-columns: 1fr; } .pick { min-height: 0; } .rest li { grid-template-columns: 1fr; gap: 4px; } }
+
+/* Why */
+.why { display: grid; grid-template-columns: 1fr 1fr; gap: 0 clamp(28px, 5vw, 80px); margin-top: clamp(32px, 5vh, 56px); }
+.why div { padding: 26px 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: 56px 1fr; gap: 12px; }
+.why .mono { color: var(--orange); padding-top: 6px; }
+.why h3 { font-size: clamp(22px, 2vw, 30px); letter-spacing: -.03em; line-height: 1.1; }
+.why p { color: var(--muted); margin-top: 6px; grid-column: 2; }
+@media (max-width: 800px) { .why { grid-template-columns: 1fr; } }
+
+/* Packages */
+.pks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: clamp(32px, 5vh, 56px); align-items: stretch; }
+.pk { border: 1.5px solid var(--line); border-radius: 24px; padding: clamp(22px, 2.2vw, 34px); display: flex; flex-direction: column; transition: border-color .4s, background .4s, color .4s, translate .5s var(--ease); cursor: pointer; text-align: left; }
+.pk:hover { border-color: var(--fg); }
+.pk.on { background: var(--fg); color: var(--bg); border-color: var(--fg); translate: 0 -10px; }
+.pk .tag { align-self: flex-start; background: var(--orange); color: #fff; border-radius: 99px; padding: 4px 11px; visibility: hidden; margin-bottom: 18px; }
+.pk.on .tag { visibility: visible; }
+.pk h3 { font-size: clamp(28px, 2.6vw, 42px); }
+.pk .who2 { margin-top: 10px; font-size: 15.5px; opacity: .75; min-height: 4.6em; }
+.pk ul { margin-top: 18px; border-top: 1px solid var(--line); font-size: 15px; }
+.pk.on ul, .pk.on li { border-color: color-mix(in srgb, var(--bg) 25%, transparent); }
+.pk li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.pk .price { margin-top: auto; padding-top: 24px; display: flex; align-items: baseline; gap: 8px; }
+.pk .price b { font-family: var(--f-head); font-size: clamp(44px, 4.4vw, 68px); letter-spacing: -.05em; line-height: 1; }
+.pk .price span { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; opacity: .7; }
+.note { color: var(--muted); font-size: 14px; margin-top: 20px; }
+@media (max-width: 900px) { .pks { grid-template-columns: 1fr; } .pk.on { translate: 0 0; } .pk .who2 { min-height: 0; } .pk .tag { display: none; } .pk.on .tag { display: inline-block; } }
+
+/* Clients + process */
+.cl { columns: 2; column-gap: clamp(28px, 5vw, 80px); margin-top: clamp(32px, 5vh, 56px); border-top: 1.5px solid var(--fg); }
+.cl li { break-inside: avoid; padding: 14px 0; border-bottom: 1px solid var(--line); font-family: var(--f-head); font-weight: 600; font-size: clamp(20px, 2.1vw, 32px); letter-spacing: -.03em; line-height: 1.15; }
+@media (max-width: 700px) { .cl { columns: 1; } }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: clamp(32px, 5vh, 56px); counter-reset: s; }
+.step { border-top: 1.5px solid var(--fg); padding-top: 16px; counter-increment: s; }
+.step::before { content: "0" counter(s); font-family: var(--f-mono); font-size: 12px; color: var(--orange); }
+.step h3 { font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -.02em; line-height: 1.1; margin: 26px 0 8px; }
+.step p { color: var(--muted); font-size: 15.5px; }
+.step.now { border-top-color: var(--accent); }
+.step.now::before { content: "01 — " attr(data-now); color: var(--accent); }
+@media (max-width: 900px) { .steps { grid-template-columns: 1fr 1fr; } }
+
+/* Shop strip */
+.shop { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(24px, 4vw, 64px); align-items: start; }
+.shop h2 { font-size: clamp(28px, 3.4vw, 52px); }
+.shop .badge { background: var(--orange); color: #fff; border-radius: 99px; padding: 3px 10px; margin-left: 10px; }
+.shop p { color: var(--muted); }
+.shop ul { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.shop li { border: 1.5px solid var(--line); border-radius: 99px; padding: 7px 15px; font-size: 14.5px; }
+@media (max-width: 800px) { .shop { grid-template-columns: 1fr; } }
+
+/* Contact: the reply, ready to send */
+.contact { background: var(--blue); color: #fff; border-top: 0; }
+.contact .label { color: rgba(255, 255, 255, .75); }
+.contact .label b { color: #fff; }
+.letter { background: #fff; color: #101010; border-radius: 6px 28px 28px 28px; padding: clamp(22px, 3vw, 44px); max-width: 860px; margin-top: clamp(28px, 4vh, 44px); }
+.letter .mono { color: #5E5E5E; display: block; margin-bottom: 18px; }
+.letter p { font-family: var(--f-head); font-weight: 500; font-size: clamp(22px, 2.7vw, 40px); letter-spacing: -.03em; line-height: 1.2; }
+.letter p + p { margin-top: .7em; }
+.letter p em { font-style: normal; color: var(--blue); }
+.acts { display: flex; gap: 12px 22px; align-items: center; flex-wrap: wrap; margin-top: 26px; }
+.send { display: inline-flex; gap: 10px; align-items: center; background: var(--orange); color: #fff; border-radius: 99px; padding: 16px 28px; font-weight: 700; font-size: 17px; transition: background .2s, gap .3s var(--ease); }
+.send:hover { background: #101010; gap: 18px; }
+.edit { font-weight: 500; border-bottom: 1.5px solid currentColor; padding-bottom: 2px; color: #101010; }
+.contact-foot { display: flex; justify-content: space-between; gap: 20px 40px; flex-wrap: wrap; margin-top: clamp(32px, 5vh, 56px); font-size: 16px; }
+.contact-foot p { max-width: 44ch; opacity: .9; }
+.contact-foot a { font-weight: 700; border-bottom: 1.5px solid rgba(255, 255, 255, .5); }
+.contact-foot a:hover { border-color: #fff; }
+.closing { margin-top: 28px; opacity: .7; }
+
+/* Brief bar: your answer follows you down the page */
+.bar { position: fixed; left: 50%; bottom: 16px; translate: -50% 140%; z-index: 50; display: flex; align-items: center; gap: 14px; background: var(--fg); color: var(--bg); border-radius: 99px; padding: 8px 8px 8px 20px; max-width: calc(100% - 24px); box-shadow: 0 12px 40px rgba(0, 0, 0, .25); transition: translate .5s var(--ease); }
+.bar.show { translate: -50% 0; }
+.bar span { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar a { background: var(--orange); color: #fff; border-radius: 99px; padding: 9px 16px; font-size: 14px; font-weight: 700; white-space: nowrap; }
+.bar button { font-size: 14px; opacity: .7; white-space: nowrap; }
+.bar button:hover { opacity: 1; }
+
+footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; padding-block: 24px; font-size: 13px; color: var(--muted); }
+footer nav { display: flex; gap: 20px; }
+footer a:hover { color: var(--fg); }
+</style>
+</head>
+<body>
+
+<header class="nav"><div class="wrap">
+  <a class="logo" href="#top">The Social Company<i>.</i></a>
+  <nav class="nav-links">
+    <a href="#plan" data-i18n="nav.services"></a>
+    <a href="#packages" data-i18n="nav.packages"></a>
+    <a href="#clients" data-i18n="nav.clients"></a>
+    <a href="#shop" data-i18n="nav.shop"></a>
+    <a href="#contact" data-i18n="nav.contact"></a>
+  </nav>
+  <div data-controls></div>
+</div></header>
+
+<main id="top">
+  <section class="hero wrap">
+    <div class="turn">
+      <span class="who mono">The Social Co.</span>
+      <div>
+        <h1 class="hello" id="hello"></h1>
+        <p class="intro" id="intro"></p>
+      </div>
+    </div>
+    <div class="turn you">
+      <span class="who mono" id="youLabel"></span>
+      <div>
+        <p class="sentence" id="sentence"></p>
+        <div class="answer" id="answer" aria-live="polite">
+          <p id="answerText"></p>
+          <a class="go" href="#plan"><span id="seePlan"></span> <span>↓</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="plan">
+    <span class="label mono"><b>01</b><span id="planLabel"></span></span>
+    <div class="plan-head">
+      <h2 class="h" id="planTitle" data-reveal></h2>
+      <p id="planFor"></p>
+    </div>
+    <div class="picks" id="picks"></div>
+    <div class="rest">
+      <span class="label mono" id="alsoLabel" style="margin-bottom:0"></span>
+      <ul id="rest"></ul>
+      <p class="addons" id="addons"></p>
+    </div>
+  </section>
+
+  <section class="wrap" id="packages">
+    <span class="label mono"><b>02</b><span data-i18n="packages.label"></span></span>
+    <h2 class="h" data-i18n="packages.title" data-reveal></h2>
+    <div class="pks" id="pks"></div>
+    <p class="note" data-i18n="packages.note"></p>
+  </section>
+
+  <section class="wrap">
+    <span class="label mono"><b>03</b><span data-i18n="why.label"></span></span>
+    <h2 class="h" data-i18n="why.title" data-reveal></h2>
+    <div class="why" id="why"></div>
+  </section>
+
+  <section class="wrap" id="clients">
+    <span class="label mono"><b>04</b><span data-i18n="clients.label"></span></span>
+    <h2 class="h" data-i18n="clients.title" data-reveal></h2>
+    <ul class="cl" id="cl"></ul>
+  </section>
+
+  <section class="wrap">
+    <span class="label mono"><b>05</b><span data-i18n="process.label"></span></span>
+    <h2 class="h" data-i18n="process.title" data-reveal></h2>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <section class="wrap" id="shop">
+    <div class="shop">
+      <div>
+        <span class="label mono"><b>06</b><span data-i18n="shop.label"></span><span class="badge" data-i18n="shop.badge"></span></span>
+        <h2 data-i18n="shop.title"></h2>
+      </div>
+      <div>
+        <p data-i18n="shop.body"></p>
+        <ul id="shopCats"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact"><div class="wrap">
+    <span class="label mono"><b>07</b><span id="replyLabel"></span></span>
+    <h2 class="h" id="replyTitle" data-reveal></h2>
+    <div class="letter">
+      <span class="mono" id="letterTo"></span>
+      <p id="letterHi"></p>
+      <p id="letterBody"></p>
+      <p id="letterAsk"></p>
+      <div class="acts">
+        <a class="send" id="send"><span id="sendText"></span> <span>→</span></a>
+        <a class="edit" href="#top" id="editLink"></a>
+      </div>
+    </div>
+    <div class="contact-foot">
+      <p><span data-i18n="contact.body"></span> <b data-i18n="contact.free"></b></p>
+      <p><a data-email></a><br><a data-ig></a></p>
+    </div>
+    <div class="closing mono" id="closing"></div>
+  </div></section>
+</main>
+
+<footer><div class="wrap">
+  <span data-i18n="footer.rights"></span>
+  <span data-banners></span>
+  <nav><a href="../index.html" data-i18n="ui.back"></a><a href="#top" data-i18n="footer.top"></a></nav>
+</div></footer>
+
+<div class="bar" id="bar"><span id="barText"></span><button type="button" id="barEdit"></button><a id="barSend"></a></div>
+
+<script>
+TSC.apply();
+const $ = (s) => document.querySelector(s), $$ = (s) => [...document.querySelectorAll(s)];
+const el = TSC.lang === 'el';
+
+/* Copy that only this concept needs */
+const L = el ? {
+  you: 'Εσύ', intro: 'Ολοκληρωμένη εταιρεία μάρκετινγκ και δημιουργικού, με 7+ χρόνια εμπειρίας. Πες μας πού βρίσκεσαι και μπαίνουμε κατευθείαν στο θέμα.',
+  pre: 'Έχω', mid: 'στον κλάδο', post: 'και θέλω',
+  stages: ['μια νέα επιχείρηση', 'μια επιχείρηση που μεγαλώνει', 'μια καθιερωμένη επωνυμία'],
+  goals: ['να με βρίσκουν στο διαδίκτυο', 'μια ταυτότητα που μένει στη μνήμη', 'σταθερή παρουσία στα κοινωνικά δίκτυα', 'περισσότερες πωλήσεις από διαφημίσεις'],
+  industry: (s) => s,
+  answer: (a, b, c, pk, pr) => `Ωραία. Ξεκινάμε με <b>${a}</b>, <b>${b}</b> και <b>${c}</b>, στο πακέτο <b>${pk}</b> από €${pr} την εβδομάδα.`,
+  seePlan: 'Δες το πλάνο σου', planLabel: 'Το πλάνο σου', planTitle: 'Από πού θα ξεκινούσαμε.', planFor: (s) => `Με βάση την απάντησή σου: ${s}`,
+  also: 'Κάτω από την ίδια στέγη', suggested: 'Προτείνεται για σένα',
+  replyLabel: 'Η απάντησή σου', replyTitle: 'Έτοιμη για αποστολή.', to: 'Προς', hi: 'Γεια σας,', ask: 'Μπορούμε να κλείσουμε τη δωρεάν συνάντηση;',
+  send: 'Στείλε το', edit: 'Άλλαξε τις απαντήσεις', subject: 'Γεια — νέο αίτημα', now: 'το επόμενο βήμα σου', barEdit: 'Αλλαγή'
+} : {
+  you: 'You', intro: 'A full-service marketing and creative agency, 7+ years in. Tell us where you are and we will cut to the chase.',
+  pre: 'I run', mid: 'in', post: 'and I want',
+  stages: ['a brand-new business', 'a growing business', 'an established brand'],
+  goals: ['to be found online', 'a brand people remember', 'a consistent social presence', 'more sales from ads'],
+  industry: (s) => s.toLowerCase(),
+  answer: (a, b, c, pk, pr) => `Good. We'd start with <b>${a}</b>, <b>${b}</b> and <b>${c}</b>, on the <b>${pk}</b> package from €${pr} a week.`,
+  seePlan: 'See your plan', planLabel: 'Your plan', planTitle: "Where we'd start.", planFor: (s) => `Based on your answer: ${s}`,
+  also: 'Also under the same roof', suggested: 'Suggested for you',
+  replyLabel: 'Your reply', replyTitle: 'Ready to send.', to: 'To', hi: 'Hello,', ask: 'Can we book the free consultation?',
+  send: 'Send it', edit: 'Change my answers', subject: 'Hello — new enquiry', now: 'your next step', barEdit: 'Edit'
+};
+/* Which three services answer each goal (indexes into services.items) */
+const GOAL_SERVICES = [[3, 5, 0], [2, 4, 3], [1, 4, 3], [6, 7, 0]];
+const state = { stage: 1, industry: 0, goal: 2 };
+
+/* Static content */
+$('#hello').innerHTML = [...T.hero.title].map((c, i) => `<span style="--n:${i}">${c}</span>`).join('');
+$('#hello').setAttribute('aria-label', T.hero.title);
+$('#intro').textContent = L.intro; $('#youLabel').textContent = L.you; $('#seePlan').textContent = L.seePlan;
+$('#planLabel').textContent = L.planLabel; $('#planTitle').textContent = L.planTitle; $('#alsoLabel').textContent = L.also;
+$('#replyLabel').textContent = L.replyLabel; $('#replyTitle').textContent = L.replyTitle;
+$('#letterTo').textContent = `${L.to}: ${TSC_INFO.email}`; $('#letterHi').textContent = L.hi; $('#letterAsk').textContent = L.ask;
+$('#sendText').textContent = L.send; $('#editLink').textContent = L.edit; $('#barEdit').textContent = L.barEdit; $('#barSend').textContent = L.send + ' →';
+$('#addons').innerHTML = `<b>${T.services.addonsLabel}:</b> ${T.services.addons.join(' · ')}`;
+$('#why').innerHTML = T.why.items.map((x, i) => `<div data-reveal><span class="mono">0${i + 1}</span><h3>${x.t}</h3><p>${x.d}</p></div>`).join('');
+$('#cl').innerHTML = T.clients.items.map(n => `<li>${n}</li>`).join('');
+$('#steps').innerHTML = T.process.items.map((x, i) => `<div class="step${i ? '' : ' now'}" data-now="${L.now}"><h3>${x.t}</h3><p>${x.d}</p></div>`).join('');
+$('#shopCats').innerHTML = T.shop.cats.map(c => `<li>${c}</li>`).join('');
+$('#closing').textContent = T.contact.closing.join(' ') + ' — ' + T.contact.next;
+$('#pks').innerHTML = T.packages.items.map((x, i) => `<button type="button" class="pk" data-i="${i}" data-reveal style="--i:${i}"><span class="tag mono">${L.suggested}</span><h3>${x.name}</h3><p class="who2">${x.who}</p><ul>${x.feats.map(f => `<li>${f}</li>`).join('')}</ul><div class="price"><span>${T.packages.from}</span><b>€${x.price}</b><span>${T.packages.per}</span></div></button>`).join('');
+
+/* The sentence: three choices, each a small menu */
+const fields = [
+  { key: 'stage', opts: L.stages },
+  { key: 'industry', opts: T.industries.map(L.industry) },
+  { key: 'goal', opts: L.goals }
+];
+const tok = (f) => `<span class="tok" data-key="${f.key}"><span class="trg" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false"><span class="val"></span></span><span class="menu" role="listbox">${f.opts.map((o, i) => `<button type="button" role="option" data-i="${i}">${o}</button>`).join('')}</span></span>`;
+$('#sentence').innerHTML = `${L.pre} ${tok(fields[0])} ${L.mid} ${tok(fields[1])} ${L.post} ${tok(fields[2])}`;
+
+const plain = () => `${L.pre} ${L.stages[state.stage]} ${L.mid} ${fields[1].opts[state.industry]} ${L.post} ${L.goals[state.goal]}.`;
+function render(changed) {
+  fields.forEach((f) => {
+    const t = $(`.tok[data-key="${f.key}"]`), v = t.querySelector('.val');
+    const words = f.opts[state[f.key]].split(' '), last = words.pop();
+    v.innerHTML = `${words.join(' ')}${words.length ? ' ' : ''}<span class="nb">${last}<i class="car">▾</i>${f.key === 'goal' ? '<span class="stop">.</span>' : ''}</span>`;
+    if (changed === f.key) { v.classList.remove('swap'); void v.offsetWidth; v.classList.add('swap'); }
+    t.querySelectorAll('[role="option"]').forEach((o, i) => o.setAttribute('aria-selected', i === state[f.key]));
+  });
+  const S = T.services.items, ids = GOAL_SERVICES[state.goal], pk = T.packages.items[state.stage];
+  $('#answerText').innerHTML = L.answer(S[ids[0]].t, S[ids[1]].t, S[ids[2]].t, pk.name, pk.price);
+  $('#planFor').textContent = L.planFor(plain());
+  $('#picks').innerHTML = ids.map((id, i) => `<article class="pick" style="--i:${i}"><span class="n">${i + 1}</span><div><h3>${S[id].t}</h3><p>${S[id].d}</p><span class="mono">${S[id].tags}</span></div></article>`).join('');
+  $('#rest').innerHTML = S.map((x, i) => ids.includes(i) ? '' : `<li><h3>${x.t}</h3><p>${x.d}</p></li>`).join('');
+  $$('.pk').forEach((p, i) => p.classList.toggle('on', i === state.stage));
+  $('#letterBody').innerHTML = `${L.pre} <em>${L.stages[state.stage]}</em> ${L.mid} <em>${fields[1].opts[state.industry]}</em> ${L.post} <em>${L.goals[state.goal]}</em>.`;
+  const href = `mailto:${TSC_INFO.email}?subject=${encodeURIComponent(L.subject)}&body=${encodeURIComponent(`${L.hi}\n\n${plain()}\n\n${L.ask}\n`)}`;
+  $('#send').href = href; $('#barSend').href = href;
+  $('#barText').textContent = `${L.stages[state.stage]} · ${fields[1].opts[state.industry]} · ${pk.name}`;
+  if (changed) ['#answer', '#picks'].forEach((s) => { const n = $(s); n.classList.remove('swap'); void n.offsetWidth; n.classList.add('swap'); });
+}
+const closeMenus = () => $$('.tok.open').forEach(t => { t.classList.remove('open'); t.firstElementChild.setAttribute('aria-expanded', 'false'); });
+$('#sentence').addEventListener('click', (e) => {
+  const opt = e.target.closest('[role="option"]'), t = e.target.closest('.tok');
+  if (opt) { state[t.dataset.key] = +opt.dataset.i; closeMenus(); render(t.dataset.key); t.firstElementChild.focus(); return; }
+  if (t) { const was = t.classList.contains('open'); closeMenus(); if (!was) { t.classList.add('open'); t.firstElementChild.setAttribute('aria-expanded', 'true'); } }
+});
+document.addEventListener('click', (e) => { if (!e.target.closest('.tok')) closeMenus(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeMenus();
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('trg')) { e.preventDefault(); e.target.click(); }
+});
+/* Picking a package card updates the stage in your sentence too, so the two never disagree */
+$('#pks').addEventListener('click', (e) => { const p = e.target.closest('.pk'); if (p) { state.stage = +p.dataset.i; render('stage'); } });
+$('#barEdit').addEventListener('click', () => scrollTo({ top: 0, behavior: TSC.reduced ? 'auto' : 'smooth' }));
+
+render();
+TSC.reveal();
+
+/* The brief bar shows once the sentence has scrolled away, and steps aside at the contact section */
+let heroSeen = true, contactSeen = false;
+const bar = $('#bar'), upd = () => bar.classList.toggle('show', !heroSeen && !contactSeen);
+new IntersectionObserver(([e]) => { heroSeen = e.isIntersecting; upd(); }).observe($('.hero'));
+new IntersectionObserver(([e]) => { contactSeen = e.isIntersecting; upd(); }, { rootMargin: '0px 0px -20% 0px' }).observe($('#contact'));
+</script>
+</body>
+</html>
